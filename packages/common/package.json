@@ -1,0 +1,23 @@
+{
+  "name": "@repo/common",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc && npm install"
+  },
+  "exports": {
+    "./SignupData": "./dist/index.js",
+    "./SignupType": "./dist/index.js",
+    "./GroupChatData": "./dist/index.js",
+    "./GroupChatType": "./dist/index.js",
+    "./UsersData": "./dist/index.js",
+    "./UsersType": "./dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}

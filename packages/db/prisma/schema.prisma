@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id           Int            @id @default(autoincrement())
+  name         String
+  username     String         @unique
+  profile      String?
+  email        String?
+  password     String 
+  gender       Gender?
+  conversations Conversation[] @relation("NormalConversations")
+  adminConversations Conversation[] @relation("AdminConversations")
+  messages Message[]
+  friends                User[]          @relation("UserFriends")
+  friendOf               User[]          @relation("UserFriends")
+  friendRequestsSent     FriendRequest[] @relation("RequestSender")
+  friendRequestsReceived FriendRequest[] @relation("RequestReceiver")
+  friendRequests     FriendRequest[]     @relation("AllFriendRequest")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model Conversation {
+  id           Int        @id @default(autoincrement())
+  name         String?
+  pic          String?
+  isGroupChat  Boolean
+  users        User[]     @relation("NormalConversations")
+  admins       User[]     @relation("AdminConversations")
+  messages Message[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+
+model Message{
+  id Int @id @default(autoincrement())
+  body String
+  senderId Int
+  Sender User @relation(fields: [senderId],references: [id])
+  conversationId Int
+  Conversation Conversation @relation(fields: [conversationId],references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model FriendRequest {
+  id           Int        @id @default(autoincrement())
+  sender       User       @relation("RequestSender", fields: [senderId], references: [id])
+  senderId     Int
+  receiver     User       @relation("RequestReceiver", fields: [receiverId], references: [id])
+  receiverId   Int
+  status       FriendRequestStatus
+  users        User[]     @relation("AllFriendRequest")
+  userIds      Int[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum Gender {
+  male
+  female
+}
